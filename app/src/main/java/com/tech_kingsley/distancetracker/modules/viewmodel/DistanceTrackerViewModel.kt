@@ -13,7 +13,7 @@ class DistanceTrackerViewModel(app: Application) : AndroidViewModel(app) {
 
     private val database = DistanceTrackerDb.database(app)
     private val dao = database.daoTracker
-    val allLocation = dao.getLocation()
+    val allLocation = dao.getLocations()
 
     fun saveLocation(location: TrackerLocation) {
         viewModelScope.launch {

@@ -176,7 +176,7 @@ class MainActivity : AppCompatActivity(), LocationListener,
             .setFastestInterval(FASTEST_INTERVAL)
 
         if (Utils.checkPermission(this, Constant.LOCATION_PERMISSION)) {
-            if (googleApiClient.isConnected) {
+            if (isGoogleApiConnected()) {
                 LocationServices.FusedLocationApi.requestLocationUpdates(
                     googleApiClient,
                     locationRequest,
@@ -189,17 +189,23 @@ class MainActivity : AppCompatActivity(), LocationListener,
     private fun stopLocationUpdates() {
         Timber.i("stop location update function called")
         if (Utils.checkPermission(this, Constant.LOCATION_PERMISSION)) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this)
-            lastLocation?.let {
-                trackerLocation.latitude = it.latitude
-                trackerLocation.longitude = it.longitude
-            }
+            if (isGoogleApiConnected()) {
+                LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this)
+                lastLocation?.let {
+                    trackerLocation.latitude = it.latitude
+                    trackerLocation.longitude = it.longitude
+                }
 
-            distanceTrackerVM.saveLocation(trackerLocation)
-            Timber.i("trackerLocation $trackerLocation")
-            val intent = Intent(this, MapsActivity::class.java)
-            startActivity(intent)
+                distanceTrackerVM.saveLocation(trackerLocation)
+                Timber.i("trackerLocation $trackerLocation")
+                val intent = Intent(this, MapsActivity::class.java)
+                startActivity(intent)
+            }
         }
+    }
+
+    private fun isGoogleApiConnected(): Boolean {
+        return googleApiClient.isConnected
     }
 
     private fun showToast(msg: String) {
